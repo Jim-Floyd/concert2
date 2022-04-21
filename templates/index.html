@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}
+    Home
+{% endblock title %}
+{% block content %}
+{{user.username}}
+<br>
+    Home Page
+    <ol>
+        {%for venue in venues%}
+            <li>{{venue.name_place}}</li>
+        {%endfor%}
+    </ol>
+    <a href="{{url_for('create_venue')}}">Create Venue</a>
+{% endblock content %}

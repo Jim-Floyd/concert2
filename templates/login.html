@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}
+    Login
+{% endblock title %}
+{% block content %}
+    <h2 align="center">Login</h2>
+    <form action="" method="post">
+        <label for="email">Email Address</label>
+        <input class="form-control form-control-sm" type="email" placeholder="Enter email" aria-label=".form-control-sm example" id="email" name="email">
+        <label for="password">Password</label>
+        <input class="form-control form-control-sm" type="password" placeholder="Enter password" aria-label=".form-control-sm example" id="password" name="password">
+        <br>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+{% endblock content %}
