@@ -19,18 +19,20 @@ def setup(app):
 class Show(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     start_time = db.Column(db.DateTime(timezone=True), default=func.now())
+    image_show = db.Column(db.String(100))
+    finish_time = db.Column(db.DateTime(timezone=True), default=func.now())
     name_show = db.Column(db.String(30), nullable=False)
-    
     users = db.relationship('User', backref='show')
     venue_id = db.Column(db.Integer(), db.ForeignKey(
         'venue.id'), nullable=False)
+
 
 class Venue(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     image_place = db.Column(db.String(100))
     name_place = db.Column(db.String(100), nullable=False)
     address_place = db.Column(db.String(100), nullable=False)
-    has_show = db.Column(db.Boolean(), default=False)    
+    has_show = db.Column(db.Boolean(), default=False)
     shows = db.relationship('Show', backref='venue')
 
 
@@ -44,5 +46,3 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean(), default=False)
     show_id = db.Column(db.Integer(), db.ForeignKey(
         'show.id'))
-
-

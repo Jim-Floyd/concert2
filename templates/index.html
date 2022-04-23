@@ -14,7 +14,16 @@
             {%endif%}
             <ol>
                 {%for venue in venues%}
-                    <li>{{venue.name_place}}</li>
+                    <li>
+                        <div class="card" style="width: 18rem;">
+                            <img src="{{venue.image_place}}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <p class="card-text">{{venue.name_place}}</p>
+                                <p class="card-text">{{venue.address_place}}</p>
+                                <button class="btn btn-primary mb-3"><a style="text-decoration:None; color:white" href="{{url_for('venue_page', venue_id=venue.id)}}">Check venues</a></button>
+                            </div>
+                        </div>
+                    </li>
                 {%endfor%}
             </ol>
         </div>
