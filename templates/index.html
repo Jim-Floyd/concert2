@@ -3,13 +3,31 @@
     Home
 {% endblock title %}
 {% block content %}
-{{user.username}}
-<br>
-    Home Page
-    <ol>
-        {%for venue in venues%}
-            <li>{{venue.name_place}}</li>
-        {%endfor%}
-    </ol>
-    <a href="{{url_for('create_venue')}}">Create Venue</a>
+
+    {{user.username}}
+    <br>
+    <div class="row">
+        <div class="col">
+            <h3>Venues</h3>
+            {%if user.is_admin == True%}
+                <button type="submit" class="btn btn-primary mb-3"><a style="text-decoration:None; color:white" href="{{url_for('create_venue')}}">Create Venue</a></button>
+            {%endif%}
+            <ol>
+                {%for venue in venues%}
+                    <li>{{venue.name_place}}</li>
+                {%endfor%}
+            </ol>
+        </div>
+        <div class="col">
+            <h3>Shows</h3>
+            {%if user.is_admin == True%}
+                <button type="submit" class="btn btn-primary mb-3"><a style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a></button>
+            {%endif%}
+            <ol>
+                {%for concert in shows%}
+                    <li>{{concert.name_show}}</li>
+                {%endfor%}
+            </ol>
+        </div>
+    </div>
 {% endblock content %}

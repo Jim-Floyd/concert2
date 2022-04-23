@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}
+    Create Venue
+{% endblock title %}
+{% block content %}
+    <h2 align="center">Create Venue</h2>
+    <form action="{{url_for('create_concert')}}" method="post" enctype="multipart/form-data">
+        <label for="name">Name of Show</label>
+        <input class="form-control form-control-sm" type="text" placeholder="Enter show name" aria-label=".form-control-sm example" id="name" name="name_show">
+        <label for="time">Time of Show</label>
+        <input class="form-control form-control-sm" type="datetime-local" placeholder="Enter start time" aria-label=".form-control-sm example" id="time" name="time_show">
+        <select name="select-venue" id="">
+            {%for venue in venues%}
+                <option value="{{venue.id}}">{{venue.name_place}}</option>
+            {%endfor%}
+        </select>
+        <br>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+{% endblock content %}

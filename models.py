@@ -19,27 +19,30 @@ def setup(app):
 class Show(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     start_time = db.Column(db.DateTime(timezone=True), default=func.now())
+    name_show = db.Column(db.String(30), nullable=False)
+    
+    users = db.relationship('User', backref='show')
     venue_id = db.Column(db.Integer(), db.ForeignKey(
         'venue.id'), nullable=False)
-    user_id = db.Column(db.Integer(), db.ForeignKey(
-        'user.id'), nullable=False)
-
 
 class Venue(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     image_place = db.Column(db.String(100))
-    name_place = db.Column(db.String(100))
-    address_place = db.Column(db.String(100))
-    has_show = db.Column(db.Boolean(), default=False)
-    venue = db.relationship('Show', backref='venue')
+    name_place = db.Column(db.String(100), nullable=False)
+    address_place = db.Column(db.String(100), nullable=False)
+    has_show = db.Column(db.Boolean(), default=False)    
+    shows = db.relationship('Show', backref='venue')
 
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
-    email = db.Column(db.String(20), unique=True)
-    password = db.Column(db.String())
-    username = db.Column(db.String())
-    position = db.Column(db.String())
+    email = db.Column(db.String(40), unique=True, nullable=False)
+    password = db.Column(db.String(), nullable=False)
+    username = db.Column(db.String(), unique=True, nullable=False)
     data_joined = db.Column(db.DateTime(), default=datetime.now())
     is_artist = db.Column(db.Boolean(), default=False)
-    venue = db.relationship('Show', backref='user')
+    is_admin = db.Column(db.Boolean(), default=False)
+    show_id = db.Column(db.Integer(), db.ForeignKey(
+        'show.id'))
+
+
