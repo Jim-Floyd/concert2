@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}
+Venues
+{% endblock title %}
+{% block content %}
+<!-- {%if user%}
+        {%if not user.is_artist%}User{%else%}Artist{%endif%}:{{user.username}}
+    {%endif%} -->
+<img style="width: 1300px; height: 760px" src="/{{concert.image_show}}" alt="">
+<h3> Show name:{{concert.name_show}}</h3>
+<p>Date: from {{date_to_str_start}}- till: {{date_to_str_finish}}</p>
+<p>Address: {{venue.name_place}}</p>
+<!-- {%if user.is_artist == True%} -->
+<!-- <form action="{{url_for('check_venue', venue_id=venue.id)}}">
+    <input type="datetime-local" placeholder="Enter time to check" aria-label=".form-control-sm example"
+        name="check_time">
+    <button type="submit" class="btn btn-primary">Check</button>
+</form> -->
+
+<!-- {%endif%} -->
+<!-- <ol>
+    {% for show in venue.shows %}
+    <li>{{show.name_show}}({{show.start_time}}/{{show.finish_time}})}}</li>
+    {% endfor %}
+</ol> -->
+{%endblock content%}

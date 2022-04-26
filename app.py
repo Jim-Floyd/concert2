@@ -138,6 +138,16 @@ def create_concert():
     return render_template('new_concert.html', venues=venues, user=user)
 
 
+@app.route('/concert_page/<int:concert_id>/<int:venue_id>')
+def concert_page(concert_id, venue_id):
+    user = get_current_user()
+    concert = Show.query.filter_by(id=concert_id).first()
+    venue = Venue.query.filter_by(id=venue_id).first()
+    date_to_str_start = concert.start_time.strftime("%d.%m.%Y %H:%M")
+    date_to_str_finish = concert.finish_time.strftime("%d.%m.%Y %H:%M")
+    return render_template('concert_page.html', concert=concert, user=user, venue=venue, date_to_str_start=date_to_str_start, date_to_str_finish=date_to_str_finish)
+
+
 @app.route('/venue_page/<int:venue_id>')
 def venue_page(venue_id):
     user = get_current_user()
@@ -158,6 +168,23 @@ def check_venue(venue_id):
                 flash('It is free. You can keep it busy', category='success')
                 return redirect(url_for('venue_page', venue_id=venue_id))
     return render_template('venue_page.html', venue=venue, user=user)
+
+
+@app.route('/check_date/<int:venue_id>', methods=['POST'])
+def check_date(venue_id):
+    time_to_check = request.get_json()['time_entered']
+    time_to_check_to_date = datetime.strptime(
+        time_to_check, '%Y-%m-%dT%H:%M')
+    print(time_to_check_to_date)
+    venue = Venue.query.filter_by(id=venue_id).first()
+    for show in venue.shows:
+        show_start = show.start_time
+        show_finish = show.finish_time
+        if show_start.replace(tzinfo=None) <= time_to_check_to_date.replace(tzinfo=None) <= show_finish.replace(tzinfo=None):
+            flash('busy')
+            return redirect(url_for('venue_page', venue_id=venue_id))
+        flash('free')
+        return redirect(url_for('venue_page', venue_id=venue_id))
 
 
 manager = Manager(app)

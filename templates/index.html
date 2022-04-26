@@ -10,7 +10,7 @@
         <div class="col">
             <h3>Venues</h3>
             {%if user.is_admin == True%}
-                <button type="submit" class="btn btn-primary mb-3"><a style="text-decoration:None; color:white" href="{{url_for('create_venue')}}">Create Venue</a></button>
+                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_venue')}}">Create Venue</a>
             {%endif%}
             <ol>
                 {%for venue in venues%}
@@ -20,7 +20,7 @@
                             <div class="card-body">
                                 <p class="card-text">{{venue.name_place}}</p>
                                 <p class="card-text">{{venue.address_place}}</p>
-                                <button class="btn btn-primary mb-3"><a style="text-decoration:None; color:white" href="{{url_for('venue_page', venue_id=venue.id)}}">Check venues</a></button>
+                                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('venue_page', venue_id=venue.id)}}">Check venues</a>
                             </div>
                         </div>
                     </li>
@@ -30,11 +30,22 @@
         <div class="col">
             <h3>Shows</h3>
             {%if user.is_admin == True%}
-                <button type="submit" class="btn btn-primary mb-3"><a style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a></button>
+                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a>
             {%endif%}
             <ol>
                 {%for concert in shows%}
-                    <li>{{concert.name_show}}</li>
+                    <li><div class="card" style="width: 18rem;">
+                            <img src="{{concert.image_show}}" class="card-img-top" alt="...">
+                            <div class="card-body">
+                                <p class="card-text">{{concert.name_show}}</p>
+                                {%for venue in venues%}
+                                    {%if venue.id==concert.venue_id%}
+                                        <p class="card-text">{{venue.name_place}}</p>
+                                    {%endif%}
+                                {%endfor%}
+                                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('concert_page', concert_id=concert.id, venue_id=concert.venue_id)}}">View show</a>
+                            </div>
+                        </div></li>
                 {%endfor%}
             </ol>
         </div>

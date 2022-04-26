@@ -9,16 +9,24 @@
     <img style="width: 1300px; height: 760px" src="/{{venue.image_place}}" alt="">
     <h3> Name:{{venue.name_place}}</h3>
     <p>Address: {{venue.address_place}}</p>
-    {%if user.is_artist == True%}
-        <form action="{{url_for('check_venue', venue_id=venue.id)}}">
-            <input type="datetime-local" placeholder="Enter time to check" aria-label=".form-control-sm example" name="check_time">
-            <button type="submit" class="btn btn-primary">Check</button>
-        </form>
-        <p>{{check_msg}}</p>
-    {%endif%}
+    {# {%if user.is_artist == True%} #}
+        {# <form action="{{url_for('check_date', venue_id=venue.id)}}" method="post"> #}
+            <input type="datetime-local" data-id="{{ venue.id }}" placeholder="Enter time to check" aria-label=".form-control-sm example" class="check_time">
+            <button class="btn btn-primary mb-3" type="submit">Check</button>
+        {# </form> #}
+        {# <p>{{check_msg}}</p>
+    {%endif%} #}
+    <h4>Available Shows:</h4>
     <ol>
         {% for show in venue.shows %}
-            <li>{{show.name_show}}({{show.start_time}}/{{show.finish_time}})}}</li>
+            <li> {{show.name_show}} <a class="btn btn-primary mb-3" href="{{url_for('concert_page', concert_id=show.id, venue_id=venue.id )}}">View </a></li>
         {% endfor %}
+        {# {% for show in venue.shows %} #}
+            
+        {# {% endfor %} #}
     </ol>
 {%endblock content%}
+
+{%block js%}
+<script src="/static/js.js"></script>
+{%endblock%}
