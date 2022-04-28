@@ -9,9 +9,9 @@
     <div class="row">
         <div class="col">
             <h3>Venues</h3>
-            {%if user.is_admin == True%}
+            {# {%if user.is_admin == True%} #}
                 <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_venue')}}">Create Venue</a>
-            {%endif%}
+            {# {%endif%} #}
             <ol>
                 {%for venue in venues%}
                     <li>
@@ -29,9 +29,9 @@
         </div>
         <div class="col">
             <h3>Shows</h3>
-            {%if user.is_admin == True%}
-                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a>
-            {%endif%}
+            {# {%if user.is_admin == True%} #}
+                {# <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a> #}
+            {# {%endif%} #}
             <ol>
                 {%for concert in shows%}
                     <li><div class="card" style="width: 18rem;">
@@ -46,6 +46,24 @@
                                 <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('concert_page', concert_id=concert.id, venue_id=concert.venue_id)}}">View show</a>
                             </div>
                         </div></li>
+                {%endfor%}
+            </ol>
+        </div>
+        <div class="col">
+            <h3>Artists</h3>
+            {# {%if user.is_admin == True%} #}
+                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('add_artist')}}">Add Artist</a>
+            {# {%endif%} #}
+            <ol>
+                {%for artist in users%}
+                    <li>
+                        <div class="user d-flex flex-row align-items-center"> 
+                            <img src="{{artist.image_user}}" width="30" class="user-img rounded-circle mr-4" style="height:70px; width:70px"> 
+                            <span><small class="font-weight-bold text-primary">{{artist.username}}</small></span> 
+                        </div> 
+                        <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" 
+                            href="{{url_for('artist_page', user_id=artist.id)}}">View Artist</a>
+                    </li>
                 {%endfor%}
             </ol>
         </div>

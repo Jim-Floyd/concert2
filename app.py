@@ -1,10 +1,11 @@
-from flask import Flask, session, request, render_template, redirect, flash, url_for
+from tkinter import image_names
+from flask import Flask, session, request, render_template, redirect, flash, url_for, jsonify
 from models import *
 from flask_migrate import *
 from flask_script import Manager
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from config import folder_url
+from config import folder_url, folder_url_user
 
 
 app = Flask(__name__)
@@ -26,7 +27,8 @@ def home():
     user = get_current_user()
     venues = Venue.query.all()
     shows = Show.query.all()
-    return render_template('index.html', user=user, venues=venues, shows=shows)
+    users = User.query.filter_by(is_artist=True).all()
+    return render_template('index.html', user=user, venues=venues, shows=shows, users=users)
 
 
 @app.route('/sign-up', methods=['POST', 'GET'])
@@ -36,6 +38,11 @@ def sign_up():
         username = request.form.get('username')
         password = request.form.get('password')
         password2 = request.form.get('re-password')
+        photo = request.files['image_user']
+        filename = secure_filename(photo.filename)
+        photo.save(os.path.join("static/user_images", filename))
+        file_url = "static/user_images"
+        result = file_url+'/'+filename
         if request.form.get('is_admin'):
             is_admin = True
         else:
@@ -56,7 +63,7 @@ def sign_up():
             flash('Password do not match', category='error')
         else:
             new_user = User(email=email, username=username,
-                            password=generate_password_hash(password, method='sha256'), is_artist=is_artist, is_admin=is_admin)
+                            password=generate_password_hash(password, method='sha256'), is_artist=is_artist, is_admin=is_admin, image_show=result)
             db.session.add(new_user)
             db.session.commit()
 
@@ -105,8 +112,8 @@ def create_venue():
     if request.method == 'POST':
         photo = request.files['image_venue']
         filename = secure_filename(photo.filename)
-        photo.save(os.path.join(app.config['UPLOADED_FOLDER'], filename))
-        file_url = folder_url()
+        photo.save(os.path.join("static/images", filename))
+        file_url = "static/images"
         result = file_url+'/'+filename
         new_venue = Venue(name_place=request.form.get(
             'name_venue'), address_place=request.form.get('address_venue'), image_place=result)
@@ -116,26 +123,30 @@ def create_venue():
     return render_template('new_venue.html', user=user)
 
 
-@app.route('/create-concert', methods=['POST', 'GET'])
-def create_concert():
+@app.route('/create-concert/<int:artist_id>', methods=['POST', 'GET'])
+def create_concert(artist_id):
     user = get_current_user()
     venues = Venue.query.all()
+    artist = User.query.filter_by(id=artist_id).first()
     if request.method == 'POST':
         photo = request.files['image_show']
         filename = secure_filename(photo.filename)
-        photo.save(os.path.join(app.config['UPLOADED_FOLDER'], filename))
-        file_url = folder_url()
+        photo.save(os.path.join("static/images", filename))
+        file_url = "static/images"
         result = file_url+'/'+filename
         if request.form.get('time-start') < request.form.get('time-finish'):
             new_concert = Show(name_show=request.form.get(
                 'name_show'), start_time=request.form.get('time-start'), finish_time=request.form.get('time-finish'), venue_id=request.form.get('select-venue'), image_show=result)
             db.session.add(new_concert)
             db.session.commit()
+            User.query.filter_by(id=artist_id).update(
+                {'show_id': new_concert.id})
+            db.session.commit()
         else:
             flash('Finish time must be greater than start time', category='error')
             return redirect(url_for('create_concert'))
-        return redirect(url_for('home'))
-    return render_template('new_concert.html', venues=venues, user=user)
+        return redirect(url_for('artist_page', user_id=artist_id))
+    return render_template('new_concert.html', venues=venues, user=user, artist=artist)
 
 
 @app.route('/concert_page/<int:concert_id>/<int:venue_id>')
@@ -172,19 +183,87 @@ def check_venue(venue_id):
 
 @app.route('/check_date/<int:venue_id>', methods=['POST'])
 def check_date(venue_id):
+    object = {}
+    object['found'] = False
     time_to_check = request.get_json()['time_entered']
-    time_to_check_to_date = datetime.strptime(
-        time_to_check, '%Y-%m-%dT%H:%M')
+    if time_to_check:
+        time_to_check_to_date = datetime.strptime(
+            time_to_check, '%Y-%m-%dT%H:%M')
+    else:
+        object['found'] = 'None'
     print(time_to_check_to_date)
     venue = Venue.query.filter_by(id=venue_id).first()
     for show in venue.shows:
         show_start = show.start_time
         show_finish = show.finish_time
+
         if show_start.replace(tzinfo=None) <= time_to_check_to_date.replace(tzinfo=None) <= show_finish.replace(tzinfo=None):
-            flash('busy')
-            return redirect(url_for('venue_page', venue_id=venue_id))
-        flash('free')
-        return redirect(url_for('venue_page', venue_id=venue_id))
+            object['found'] = True
+
+    return jsonify(object)
+
+
+@app.route('/check_date_user/<int:user_id>', methods=['POST'])
+def check_date_user(user_id):
+    object = {}
+    object['found'] = False
+    time_to_check = request.get_json()['time_entered']
+    if time_to_check:
+        time_to_check_to_date = datetime.strptime(
+            time_to_check, '%Y-%m-%dT%H:%M')
+    else:
+        object['found'] = 'None'
+    user = User.query.filter_by(id=user_id).first()
+    shows = Show.query.all()
+    for show in shows:
+        if show.id == user.show_id:
+            show_start = show.start_time
+            show_finish = show.finish_time
+
+            if show_start.replace(tzinfo=None) <= time_to_check_to_date.replace(tzinfo=None) <= show_finish.replace(tzinfo=None):
+                object['found'] = True
+
+    return jsonify(object)
+
+
+@app.route('/add_artist', methods=['POST', 'GET'])
+def add_artist():
+    user = get_current_user()
+    users = User.query.all()
+    if request.method == 'POST':
+        email = request.form.get('email')
+        username = request.form.get('username')
+        password = request.form.get('password')
+        password2 = request.form.get('re-password')
+        photo = request.files['image_user']
+        filename = secure_filename(photo.filename)
+        photo.save(os.path.join("static/user_images", filename))
+        file_url = "static/user_images"
+        result = file_url+'/'+filename
+        if len(email) <= 4:
+            flash('Email must be greater than 4 characters', category='error')
+        elif len(username) <= 2:
+            flash(
+                'Username must be greater than 2 characters', category='error')
+        elif len(password) <= 4:
+            flash('Password must be greater than 4 characters', category='error')
+        elif password != password2:
+            flash('Password do not match', category='error')
+        else:
+            new_user = User(email=email, username=username,
+                            password=generate_password_hash(password, method='sha256'), is_artist=True, image_user=result)
+            db.session.add(new_user)
+            db.session.commit()
+        return redirect(url_for('home'))
+    return render_template('add_artist.html', users=users, user=user)
+
+
+@app.route('/artist_page/<int:user_id>')
+def artist_page(user_id):
+    user = get_current_user()
+    artist = User.query.filter_by(id=user_id).first()
+    shows = Show.query.all()
+    return render_template('artist_page.html', artist=artist, user=user, shows=shows)
 
 
 manager = Manager(app)

@@ -39,6 +39,7 @@ class Venue(db.Model):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(40), unique=True, nullable=False)
+    image_user = db.Column(db.String(100))
     password = db.Column(db.String(), nullable=False)
     username = db.Column(db.String(), unique=True, nullable=False)
     data_joined = db.Column(db.DateTime(), default=datetime.now())

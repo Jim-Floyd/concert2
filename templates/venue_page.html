@@ -11,8 +11,9 @@
     <p>Address: {{venue.address_place}}</p>
     {# {%if user.is_artist == True%} #}
         {# <form action="{{url_for('check_date', venue_id=venue.id)}}" method="post"> #}
-            <input type="datetime-local" data-id="{{ venue.id }}" placeholder="Enter time to check" aria-label=".form-control-sm example" class="check_time">
-            <button class="btn btn-primary mb-3" type="submit">Check</button>
+                <input type="datetime-local" data-id="{{ venue.id }}" placeholder="Enter time to check" aria-label=".form-control-sm example" class="check_time">
+                <p class="true" style='display:none'>It is busy at this time</p>
+                <p class="false" style='display:none'>It is free at this time</p>
         {# </form> #}
         {# <p>{{check_msg}}</p>
     {%endif%} #}
