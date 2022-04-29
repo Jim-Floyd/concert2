@@ -47,3 +47,4 @@ class User(db.Model, UserMixin):
     is_admin = db.Column(db.Boolean(), default=False)
     show_id = db.Column(db.Integer(), db.ForeignKey(
         'show.id'))
+    chosen_to_show = db.Column(db.Boolean, nullable=False, default=False)

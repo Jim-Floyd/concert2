@@ -10,8 +10,6 @@ Artist
 <img style="width: 800px; height: 460px;" src="/{{artist.image_user}}" alt="">
 <h3> Artist name:{{artist.username}}</h3>
 <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" 
-                            href="{{url_for('create_concert', artist_id=artist.id)}}">Add Show</a>
-<a class="btn btn-primary mb-3" style="text-decoration:None; color:white" 
                             href="{{url_for('home')}}">Home</a>
     <input type="datetime-local" data-id="{{ artist.id }}" placeholder="Enter time to check" aria-label=".form-control-sm example" class="check_time_user">
                 <p class="true" style='display:none'>It is busy at this time</p>

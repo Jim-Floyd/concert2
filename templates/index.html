@@ -30,7 +30,7 @@
         <div class="col">
             <h3>Shows</h3>
             {# {%if user.is_admin == True%} #}
-                {# <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a> #}
+                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a>
             {# {%endif%} #}
             <ol>
                 {%for concert in shows%}

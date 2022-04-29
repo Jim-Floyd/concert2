@@ -123,11 +123,11 @@ def create_venue():
     return render_template('new_venue.html', user=user)
 
 
-@app.route('/create-concert/<int:artist_id>', methods=['POST', 'GET'])
-def create_concert(artist_id):
+@app.route('/create-concert', methods=['POST', 'GET'])
+def create_concert():
     user = get_current_user()
     venues = Venue.query.all()
-    artist = User.query.filter_by(id=artist_id).first()
+    # artist = User.query.filter_by(id=artist_id).first()
     if request.method == 'POST':
         photo = request.files['image_show']
         filename = secure_filename(photo.filename)
@@ -139,24 +139,25 @@ def create_concert(artist_id):
                 'name_show'), start_time=request.form.get('time-start'), finish_time=request.form.get('time-finish'), venue_id=request.form.get('select-venue'), image_show=result)
             db.session.add(new_concert)
             db.session.commit()
-            User.query.filter_by(id=artist_id).update(
-                {'show_id': new_concert.id})
-            db.session.commit()
+            # User.query.filter_by(id=artist_id).update(
+            #     {'show_id': new_concert.id})
+            # db.session.commit()
         else:
             flash('Finish time must be greater than start time', category='error')
             return redirect(url_for('create_concert'))
-        return redirect(url_for('artist_page', user_id=artist_id))
-    return render_template('new_concert.html', venues=venues, user=user, artist=artist)
+        return redirect(url_for('home'))
+    return render_template('new_concert.html', venues=venues, user=user)
 
 
 @app.route('/concert_page/<int:concert_id>/<int:venue_id>')
 def concert_page(concert_id, venue_id):
     user = get_current_user()
+    users = User.query.filter_by(is_artist=True).all()
     concert = Show.query.filter_by(id=concert_id).first()
     venue = Venue.query.filter_by(id=venue_id).first()
     date_to_str_start = concert.start_time.strftime("%d.%m.%Y %H:%M")
     date_to_str_finish = concert.finish_time.strftime("%d.%m.%Y %H:%M")
-    return render_template('concert_page.html', concert=concert, user=user, venue=venue, date_to_str_start=date_to_str_start, date_to_str_finish=date_to_str_finish)
+    return render_template('concert_page.html', concert=concert, user=user, venue=venue, date_to_str_start=date_to_str_start, date_to_str_finish=date_to_str_finish, users=users)
 
 
 @app.route('/venue_page/<int:venue_id>')
@@ -256,6 +257,33 @@ def add_artist():
             db.session.commit()
         return redirect(url_for('home'))
     return render_template('add_artist.html', users=users, user=user)
+
+
+
+@app.route('/add_artist_to_show/<int:show_id>', methods=['POST', 'GET'])
+def add_artist_to_show(show_id):
+    if request.method == 'POST':        
+        show = Show.query.filter_by(id=show_id).first()
+        users_true = User.query.filter_by(chosen_to_show=True).all()
+        for worker in users_true:
+            show.users.append(worker)
+            db.session.commit()
+        for worker in users_true:
+            worker.chosen_to_show = False
+            db.session.commit()
+        return redirect(url_for('concert_page', concert_id=show_id, venue_id=show.venue_id))
+    # return render_template('concert_page.html', user=user, users=users)
+
+
+
+@app.route('/set_artist/<int:artist_id>', methods=['POST'])
+def set_artist(artist_id):
+    complete = request.get_json()['user_checkbox']
+    user_check = User.query.get(artist_id)
+    user_check.chosen_to_show = complete
+    db.session.commit()
+    return True
+
 
 
 @app.route('/artist_page/<int:user_id>')
