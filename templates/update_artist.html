@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}
+    Add Artist
+{% endblock title %}
+{% block content %}
+    <h2 align="center">Update Artist</h2>
+    <form action="{{url_for('update_artist', artist_id=artist.id)}}" method="post" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="image">Image of Artist</label>
+            <input class="form-control form-control-sm" type="file" aria-label=".form-control-sm example" id="image" name="image_user">
+        </div>
+        <div class="mb-3">
+            <label for="email">Email Address</label>
+            <input class="form-control form-control-sm" type="email" placeholder="Enter email" aria-label=".form-control-sm example" id="email" name="email" value="{{artist.email}}">
+        </div>
+        <div class="mb-3">
+            <label for="username">Username</label>
+            <input class="form-control form-control-sm" type="text" placeholder="Enter username" aria-label=".form-control-sm example" id="username" name="username" value="{{artist.username}}">
+        </div>
+        <div class="mb-3">
+            <label for="password">Password</label>
+            <input class="form-control form-control-sm" type="password" placeholder="Enter password" aria-label=".form-control-sm example" id="password" name="password">
+        </div>
+        <div class="mb-3">
+            <label for="re-password">Confirm Password</label>
+            <input class="form-control form-control-sm" type="password" placeholder="Confirm password" aria-label=".form-control-sm example" id="re-password" name="re-password">
+        </div>
+        <br>
+        <button type="submit" class="btn btn-primary">Update Artist</button>
+    </form>
+{% endblock content %}

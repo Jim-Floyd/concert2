@@ -21,12 +21,16 @@ if (inputDate) {
 
             .then(function (jsonResponse) {
                 console.log(jsonResponse['found'])
-                if (jsonResponse['found']) {
-                    msgTrue.style.cssText = 'display:block; color:red'
-                    msgFalse.style.cssText = 'display:none;'
-                } else if (!jsonResponse['found']) {
-                    msgTrue.style.display = 'none'
-                    msgFalse.style.cssText = 'display:block; color:green'
+                if (jsonResponse['found'] !== "None") {
+
+
+                    if (jsonResponse['found']) {
+                        msgTrue.style.cssText = 'display:block; color:red'
+                        msgFalse.style.cssText = 'display:none;'
+                    } else if (!jsonResponse['found']) {
+                        msgTrue.style.display = 'none'
+                        msgFalse.style.cssText = 'display:block; color:green'
+                    }
                 } else {
                     msgTrue.style.display = 'none'
                     msgFalse.style.display = 'none'
@@ -51,7 +55,7 @@ if (inputDate) {
 
             .then(function (jsonResponse) {
                 console.log(jsonResponse['found'])
-                if (jsonResponse['found']) {
+                if (jsonResponse['found'] !== None) {
                     msgTrue.style.cssText = 'display:block; color:red'
                     msgFalse.style.cssText = 'display:none;'
                 } else if (!jsonResponse['found']) {

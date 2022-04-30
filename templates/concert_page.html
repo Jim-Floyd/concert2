@@ -52,7 +52,7 @@ Venues
     <h3>Selected Artis(s):</h3>
     <ul>
     {% for user in concert.users %}
-        <li>{{user.username}}</li>
+        <li>{{user.username}}<a type="button" class="btn-close" aria-label="Close" href="{{url_for('delete_show_artist', show_id=concert.id, artist_id=user.id, venue_id=venue.id)}}"></a></li>
     {% endfor %}
     </ul>
 <!-- {%if user.is_artist == True%} -->

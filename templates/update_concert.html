@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}
+    Create Show
+{% endblock title %}
+{% block content %}
+    <h2 align="center">Create Show</h2>
+    <form action="{{url_for('update_show', show_id=show.id)}}" method="post" enctype="multipart/form-data">
+        <label for="image">Image of Show</label>
+        <input class="form-control form-control-sm" type="file" aria-label=".form-control-sm example" id="image" name="image_show">
+        <label for="name">Name of Show</label>
+        <input class="form-control form-control-sm" type="text" placeholder="Enter show name" aria-label=".form-control-sm example" id="name" name="name_show" value="{{show.name_show}}">       
+        <label for="venues">Choose a venue:</label>
+        <select name="select-venue" id="venues">
+            {%for venue in venues%}
+                <option value="{{venue.id}}">{{venue.name_place}}</option>
+            {%endfor%}
+        </select>
+        <br>
+        <label for="time-start">Start Time</label>
+        <input class="form-control form-control-sm" type="datetime-local" placeholder="Enter start time" aria-label=".form-control-sm example" id="time-start" name="time-start" value="{{show.start_time}}">
+        <label for="time-finish">End Time</label>
+        <input class="form-control form-control-sm" type="datetime-local" placeholder="Enter end time" aria-label=".form-control-sm example" id="time-finish" name="time-finish" value="{{show.finish_time}}">
+        <br>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+{% endblock content %}

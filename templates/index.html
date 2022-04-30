@@ -7,71 +7,122 @@
     {{user.username}}
     <br>
     <div class="row">
+        <div class="col-3">
+            <h3>Venues</h3>
+            {# {%if user.is_admin == True%} #}
+                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_venue')}}">Create Venue</a>
+            {# {%endif%} #}
+            <div class="col" style="height: 75vh; overflow-y: auto;">
+                <ol>
+                    {%for venue in venues%}
+                        <li>
+                            <div class="card" style="width: 15rem;">
+                                <img src="{{venue.image_place}}" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <p class="card-text fw-bold searching">{{venue.name_place}}</p>
+                                    <p class="card-text">{{venue.address_place}}</p>
+                                    <a class="btn btn-success mb-3 btn-sm" style="text-decoration:None; color:white" href="{{url_for('venue_page', venue_id=venue.id)}}">Check</a>
+                                    <a class="btn btn-primary mb-3 btn-sm" style="text-decoration:None; color:white" href="{{url_for('update_venue', venue_id=venue.id)}}">Update</a>
+                                    <a class="btn btn-danger mb-3 btn-sm" onclick="return confirm('Are you sure you want to delete this item?');" style="text-decoration:None; color:white" href="{{url_for('delete_venue', venue_id=venue.id)}}">Delete</a>
+                                </div>
+                            </div>
+                        </li>
+                    {%endfor%}
+                </ol>
+            </div>
+        </div>
+        <div class="col-6">
+            <h3>Shows</h3>
+            {# {%if user.is_admin == True%} #}
+                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a>
+            {# {%endif%} #}
+            <div class="col" style="height: 75vh; overflow-y: auto;">
+                <ol>
+                    {%for concert in shows|sort(attribute='start_time')%}
+                        {% if concert.finish_time.replace(tzinfo=None)>=current_time %}
+                            <li>
+                                <div class="card text-center" style="width: 32rem;">
+                                    <img src="{{concert.image_show}}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <p class="fw-bold searching">{{concert.name_show}}</p>
+                                        {%for venue in venues%}
+                                            {%if venue.id==concert.venue_id%}
+                                                <p class="card-text">Adress: {{venue.name_place}}</p>
+                                            {%endif%}
+                                        {%endfor%}
+                                        <p class="card-text">from: {{concert.start_time.strftime("%d-%m-%Y, %H:%M")}}</p>
+                                        <p class="card-text">till: {{concert.finish_time.strftime("%d-%m-%Y, %H:%M")}}</p>
+                                        <a class="btn btn-success mb-3 btn-sm" style="text-decoration:None; color:white" href="{{url_for('concert_page', concert_id=concert.id, venue_id=concert.venue_id)}}">View</a>
+                                        <a class="btn btn-primary mb-3 btn-sm" style="text-decoration:None; color:white" href="{{url_for('update_show', show_id=concert.id)}}">Update</a>
+                                        <a class="btn btn-danger mb-3 btn-sm" onclick="return confirm('Are you sure you want to delete this item?');" style="text-decoration:None; color:white" href="{{url_for('delete_show', show_id=concert.id)}}">Delete</a>
+                                    </div>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {%endfor%}
+                </ol>
+            </div>    
+        </div>
+        <div class="col-3">
+            <h3>Artists</h3>
+            {# {%if user.is_admin == True%} #}
+                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('add_artist')}}">Add Artist</a>
+            {# {%endif%} #}
+            <div class="col" style="height: 75vh; overflow-y: auto;">
+                <ol>
+                    {%for artist in artists%}
+                        <li>
+                            <div class="user d-flex flex-row align-items-center"> 
+                                <img src="{{artist.image_user}}" width="30" class="user-img rounded-circle mr-4" style="height:70px; width:70px"> 
+                                <span><small class="font-weight-bold text-primary searching">{{artist.username}}</small></span> 
+                            </div> 
+                            <a class="btn btn-success mb-3 btn-sm" style="text-decoration:None; color:white" 
+                                href="{{url_for('artist_page', user_id=artist.id)}}">View</a>
+                            <a class="btn btn-primary mb-3 btn-sm" style="text-decoration:None; color:white" href="{{url_for('update_artist', artist_id=artist.id)}}">Update</a>
+                            <a class="btn btn-danger mb-3 btn-sm" onclick="return confirm('Are you sure you want to delete this item?');" style="text-decoration:None; color:white" href="{{url_for('delete_artist', artist_id=artist.id)}}">Delete</a>
+                        </li>
+                    {%endfor%}
+                </ol>
+                {% if user.is_admin == True %}              
+                <ol>
+                    {%for user in users%}
+                        <li>
+                            <div class="user d-flex flex-row align-items-center"> 
+                                <img src="{{user.image_user}}" width="30" class="user-img rounded-circle mr-4" style="height:70px; width:70px"> 
+                                <span><small class="font-weight-bold text-primary searching">{{user.username}}</small></span> 
+                            </div> 
+                        </li>
+                    {%endfor%}
+                </ol>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="row mobile">
+    
         <div class="col">
             <h3>Venues</h3>
             {# {%if user.is_admin == True%} #}
                 <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_venue')}}">Create Venue</a>
             {# {%endif%} #}
-            <ol>
-                {%for venue in venues%}
-                    <li>
-                        <div class="card" style="width: 18rem;">
-                            <img src="{{venue.image_place}}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <p class="card-text fw-bold searching">{{venue.name_place}}</p>
-                                <p class="card-text">{{venue.address_place}}</p>
-                                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('venue_page', venue_id=venue.id)}}">Check venues</a>
-                            </div>
-                        </div>
-                    </li>
-                {%endfor%}
-            </ol>
-        </div>
-        <div class="col">
-            <h3>Shows</h3>
-            {# {%if user.is_admin == True%} #}
-                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a>
-            {# {%endif%} #}
-            <ol>
-                {%for concert in shows|sort(attribute='start_time')%}
-                    {% if concert.finish_time.replace(tzinfo=None)>=current_time %}
+            <div class="col" style="height: 75vh; overflow-y: auto;">
+                <ol>
+                    {%for venue in venues%}
                         <li>
-                            <div class="card text-center" style="width: 18rem;">
-                                <img src="{{concert.image_show}}" class="card-img-top" alt="...">
+                            <div class="card" style="width: 15rem;">
+                                <img src="{{venue.image_place}}" class="card-img-top" alt="...">
                                 <div class="card-body">
-                                    <p class="fw-bold searching">{{concert.name_show}}</p>
-                                    {%for venue in venues%}
-                                        {%if venue.id==concert.venue_id%}
-                                            <p class="card-text">Adress: {{venue.name_place}}</p>
-                                        {%endif%}
-                                    {%endfor%}
-                                    <p class="card-text">from: {{concert.start_time.strftime("%d-%m-%Y, %H:%M")}}</p>
-                                    <p class="card-text">till: {{concert.finish_time.strftime("%d-%m-%Y, %H:%M")}}</p>
-                                    <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('concert_page', concert_id=concert.id, venue_id=concert.venue_id)}}">View show</a>
+                                    <p class="card-text fw-bold searching">{{venue.name_place}}</p>
+                                    <p class="card-text">{{venue.address_place}}</p>
+                                    <a class="btn btn-success mb-3 btn-sm" style="text-decoration:None; color:white" href="{{url_for('venue_page', venue_id=venue.id)}}">Check</a>
+                                    <a class="btn btn-primary mb-3 btn-sm" style="text-decoration:None; color:white" href="{{url_for('update_venue', venue_id=venue.id)}}">Update</a>
+                                    <a class="btn btn-danger mb-3 btn-sm" onclick="return confirm('Are you sure you want to delete this item?');" style="text-decoration:None; color:white" href="{{url_for('delete_venue', venue_id=venue.id)}}">Delete</a>
                                 </div>
                             </div>
                         </li>
-                    {% endif %}
-                {%endfor%}
-            </ol>
-        </div>
-        <div class="col">
-            <h3>Artists</h3>
-            {# {%if user.is_admin == True%} #}
-                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('add_artist')}}">Add Artist</a>
-            {# {%endif%} #}
-            <ol>
-                {%for artist in users%}
-                    <li>
-                        <div class="user d-flex flex-row align-items-center"> 
-                            <img src="{{artist.image_user}}" width="30" class="user-img rounded-circle mr-4" style="height:70px; width:70px"> 
-                            <span><small class="font-weight-bold text-primary searching">{{artist.username}}</small></span> 
-                        </div> 
-                        <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" 
-                            href="{{url_for('artist_page', user_id=artist.id)}}">View Artist</a>
-                    </li>
-                {%endfor%}
-            </ol>
+                    {%endfor%}
+                </ol>
+            </div>
         </div>
     </div>
 {% endblock content %}

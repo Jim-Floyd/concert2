@@ -18,6 +18,7 @@ Artist
     {% for show in shows %}
         {% if show.id == artist.show_id %}
             {{show.name_show}}
+            from:{{show.start_time.strftime("%d-%m-%Y, %H:%M")}} till:{{show.finish_time.strftime("%d-%m-%Y, %H:%M")}}
         {%endif%}
     {% endfor %}
 {%endblock content%}
