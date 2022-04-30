@@ -18,7 +18,7 @@
                         <div class="card" style="width: 18rem;">
                             <img src="{{venue.image_place}}" class="card-img-top" alt="...">
                             <div class="card-body">
-                                <p class="card-text">{{venue.name_place}}</p>
+                                <p class="card-text fw-bold searching">{{venue.name_place}}</p>
                                 <p class="card-text">{{venue.address_place}}</p>
                                 <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('venue_page', venue_id=venue.id)}}">Check venues</a>
                             </div>
@@ -33,19 +33,25 @@
                 <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('create_concert')}}">Organize Show</a>
             {# {%endif%} #}
             <ol>
-                {%for concert in shows%}
-                    <li><div class="card" style="width: 18rem;">
-                            <img src="{{concert.image_show}}" class="card-img-top" alt="...">
-                            <div class="card-body">
-                                <p class="card-text">{{concert.name_show}}</p>
-                                {%for venue in venues%}
-                                    {%if venue.id==concert.venue_id%}
-                                        <p class="card-text">{{venue.name_place}}</p>
-                                    {%endif%}
-                                {%endfor%}
-                                <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('concert_page', concert_id=concert.id, venue_id=concert.venue_id)}}">View show</a>
+                {%for concert in shows|sort(attribute='start_time')%}
+                    {% if concert.finish_time.replace(tzinfo=None)>=current_time %}
+                        <li>
+                            <div class="card text-center" style="width: 18rem;">
+                                <img src="{{concert.image_show}}" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <p class="fw-bold searching">{{concert.name_show}}</p>
+                                    {%for venue in venues%}
+                                        {%if venue.id==concert.venue_id%}
+                                            <p class="card-text">Adress: {{venue.name_place}}</p>
+                                        {%endif%}
+                                    {%endfor%}
+                                    <p class="card-text">from: {{concert.start_time.strftime("%d-%m-%Y, %H:%M")}}</p>
+                                    <p class="card-text">till: {{concert.finish_time.strftime("%d-%m-%Y, %H:%M")}}</p>
+                                    <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" href="{{url_for('concert_page', concert_id=concert.id, venue_id=concert.venue_id)}}">View show</a>
+                                </div>
                             </div>
-                        </div></li>
+                        </li>
+                    {% endif %}
                 {%endfor%}
             </ol>
         </div>
@@ -59,7 +65,7 @@
                     <li>
                         <div class="user d-flex flex-row align-items-center"> 
                             <img src="{{artist.image_user}}" width="30" class="user-img rounded-circle mr-4" style="height:70px; width:70px"> 
-                            <span><small class="font-weight-bold text-primary">{{artist.username}}</small></span> 
+                            <span><small class="font-weight-bold text-primary searching">{{artist.username}}</small></span> 
                         </div> 
                         <a class="btn btn-primary mb-3" style="text-decoration:None; color:white" 
                             href="{{url_for('artist_page', user_id=artist.id)}}">View Artist</a>
@@ -69,3 +75,6 @@
         </div>
     </div>
 {% endblock content %}
+{%block js%}
+<script src="/static/search_artist.js"></script>
+{%endblock%}

@@ -28,7 +28,8 @@ def home():
     venues = Venue.query.all()
     shows = Show.query.all()
     users = User.query.filter_by(is_artist=True).all()
-    return render_template('index.html', user=user, venues=venues, shows=shows, users=users)
+    current_time = datetime.now()
+    return render_template('index.html', user=user, venues=venues, shows=shows, users=users, current_time=current_time)
 
 
 @app.route('/sign-up', methods=['POST', 'GET'])
